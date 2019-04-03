@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform:
+- AWS::Serverless-2016-10-31
+
+Parameters:
+  Environment:
+    Type: String
+
+Globals:
+  Function:
+    Environment:
+      Variables:
+        SIGNUPS_TABLE_NAME: !Ref SignupsTable
+        STAGE_NAME : !Ref 'Environment'
+
+Resources:
+
+  S3AssetsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !Sub ${Environment}.assets.${ProjectName}
+
+  SignupsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Join ['-', [!Ref 'ProjectName', !Ref 'Environment']]
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+      - AttributeName: created_at
+        AttributeType: S
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      - AttributeName: created_at
+        KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  PostSignup:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: signups.post
+      Runtime: ruby2.5
+      Policies:
+       - AWSLambdaExecute
+       - AmazonDynamoDBFullAccess
+      Events:
+        GetEvent:
+          Type: Api
+          Properties:
+            Path: /signups
+            Method: post

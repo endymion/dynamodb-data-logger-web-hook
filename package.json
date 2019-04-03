@@ -1,0 +1,35 @@
+{
+  "name": "wireless-social-web-hook",
+  "version": "1.0.0",
+  "description": "AWS Lambda function written in Ruby for recording API Gateway post request data to DynamoDB.",
+  "scripts": {
+    "publish": "sam-launchpad",
+    "build": "sam-launchpad --skip-deploy --skip-package --skip-coverage --skip-validation",
+    "validate": "sam-launchpad --skip-deploy --skip-package --skip-coverage --skip-build",
+    "package": "sam-launchpad --skip-deploy --skip-build --skip-coverage --skip-validation",
+    "deploy": "sam-launchpad --skip-package --skip-build --skip-coverage --skip-validation",
+    "sam-test": "sam-launchpad --skip-package --skip-build --skip-deploy --skip-validation",
+    "create-tables": "aws dynamodb create-table --endpoint-url http://localhost:8000 --table-name wireless_social_signups --attribute-definitions AttributeName=id,AttributeType=S AttributeName=created_at,AttributeType=S --key-schema AttributeName=id,KeyType=HASH AttributeName=created_at,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1",
+    "delete-tables": "aws dynamodb delete-table --endpoint-url http://localhost:8000 --table-name wireless_social_signups",
+    "dynamodb": "docker start dynamodb",
+    "server": "sam local start-api -p 8080 --docker-network sam-local --static-dir \"\" &",
+    "start": "npm run dynamodb; npm run server",
+    "stop": "killall sam; killall node",
+    "restart": "npm run stop; npm run start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VenueDriver/wireless-social-web-hook.git"
+  },
+  "author": "Ryan Alyn Porter",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/VenueDriver/wireless-social-web-hook/issues"
+  },
+  "homepage": "https://github.com/VenueDriver/wireless-social-web-hook#readme",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "sam-launchpad": "^1.1.23"
+  }
+}
