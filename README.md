@@ -12,15 +12,17 @@ These instructions are specifically for setting up this project for development 
 
 Create a new Cloud9 environment and clone this Git repository to it.  It's simplest if you set it up so that the root of the repository is in ```~/environment``` in the Cloud9 environment.
 
+Once you have the project in ```~/environment```, ```cd``` to that directory.
+
+#### You must use the same version of Ruby!
+
+    rvm use 2.5.0 --install
+
 ##### Use NPM to install Node packages
 
 This will install the SAM Launchpad package, used for deployment.
 
     npm install
-
-##### Use the Bundler gem for Ruby to install Ruby dependencies
-
-    bundle install
 
 ##### Install SAM
 
@@ -40,7 +42,7 @@ First, create a network for SAM Local to reach your local DynamoDB:
 
 Then install and run DynamoDB Local, on that Docker network:
 
-    docker run -d -v "$PWD":/dynamodb_local_db -p 8000:8000 --network sam-local --name dynamodb dynamodb-local
+    docker run -d -v "$PWD":/dynamodb_local_db -p 8000:8000 --network sam-local --name dynamodb amazon/dynamodb-local
 
 If you have already done that once and downloaded the DynamoDB container before, then you can run the existing container with:
 
@@ -54,15 +56,15 @@ If you need to drop those tables and re-create them, then do this:
 
     npm run delete-tables
 
-To scan the current contents of your ```payment_requests``` table:
+To scan the current contents of your ```wireless_social_signups``` table:
 
-    aws dynamodb scan --endpoint-url http://localhost:8000 --table-name payment_requests
+    aws dynamodb scan --endpoint-url http://localhost:8000 --table-name wireless_social_signups
 
 #### Start an HTTP server with SAM Local
 
-Use SAM Local for development:
+Build, and use SAM Local for development:
 
-    sam local start-api -p 8080 --docker-network sam-local
+    sam build --base-dir lib && sam local start-api -p 8080 --docker-network sam-local --a-vars env.json
 
 Port 8080 is important if you're using AWS Cloud9.
 

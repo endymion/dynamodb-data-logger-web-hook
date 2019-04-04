@@ -1,4 +1,6 @@
-.c9
-.bundle
-node_modules
-vendor
+.aws-sam/
+.bundle/
+.c9/
+.rvmrc
+node_modules/
+vendor/
