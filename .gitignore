@@ -4,3 +4,4 @@
 .rvmrc
 node_modules/
 vendor/
+packaged-template.yaml
