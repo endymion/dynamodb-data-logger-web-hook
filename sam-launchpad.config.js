@@ -1,7 +1,7 @@
 const join = require('path').join;
 
 module.exports = {
-  "project_name": "wireless-social-web-hook",
+  "project_name": "dynamodb-data-logger-web-hook",
   "single_project": true,
   "base_path": join( __dirname ),
   "template_parameters": {

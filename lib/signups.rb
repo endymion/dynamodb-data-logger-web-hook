@@ -1,10 +1,9 @@
 require 'aws-record'
+require 'ap'
 
 class SignupTable
   include Aws::Record
-  if endpoint = ENV['DYNAMODB_ENDPOINT']
-    configure_client endpoint: endpoint
-  end
+  configure_client endpoint: 'http://dynamodb:8000' if ENV['AWS_SAM_LOCAL']
   set_table_name ENV['SIGNUPS_TABLE_NAME']
   string_attr :id, hash_key: true
   string_attr :created_at, hash_key: true
@@ -12,6 +11,7 @@ class SignupTable
 end
 
 def post(event:,context:)
+  puts "EVENT: #{event.ai}"
   item =
     SignupTable.new({
       id: SecureRandom.uuid,
@@ -19,5 +19,5 @@ def post(event:,context:)
       body: event["body"]
     })
   item.save!
-  { statusCode: 200, body: item.to_s }
+  { statusCode: 200, body: item.to_h.ai }
 end

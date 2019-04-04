@@ -1,32 +1,34 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform:
 - AWS::Serverless-2016-10-31
-
 Parameters:
   Environment:
     Type: String
   ProjectName:
     Type: String
-
 Globals:
   Function:
     Environment:
       Variables:
-        SIGNUPS_TABLE_NAME: !Ref SignupsTable
-        STAGE_NAME : !Ref 'Environment'
-
+        SIGNUPS_TABLE_NAME:
+          Ref: SignupsTable
+        STAGE_NAME:
+          Ref: Environment
 Resources:
-
   S3AssetsBucket:
     Type: AWS::S3::Bucket
     Properties:
       AccessControl: PublicRead
-      BucketName: !Sub ${Environment}.assets.${ProjectName}
-
+      BucketName:
+        Fn::Sub: ${Environment}.assets.${ProjectName}
   SignupsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Join ['-', [!Ref 'ProjectName', !Ref 'Environment']]
+      TableName:
+        Fn::Join:
+        - '-'
+        - - Ref: ProjectName
+          - Ref: Environment
       AttributeDefinitions:
       - AttributeName: id
         AttributeType: S
@@ -40,18 +42,18 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
-
   PostSignup:
     Type: AWS::Serverless::Function
     Properties:
       Handler: signups.post
       Runtime: ruby2.5
       Policies:
-       - AWSLambdaExecute
-       - AmazonDynamoDBFullAccess
+      - AWSLambdaExecute
+      - AmazonDynamoDBFullAccess
       Events:
         GetEvent:
           Type: Api
           Properties:
             Path: /signups
             Method: post
+      CodeUri: s3://dynamodb-data-logger-web-hook/development//676ab0023ba000765a0539bb6fb6d84e
