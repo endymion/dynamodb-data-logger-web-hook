@@ -27,22 +27,6 @@ Once you have the project in ```~/environment```, ```cd``` to that directory.
 
     rvm use 2.5.0 --install
 
-##### Upgrade Node
-
-You want to use the same Node version that the Lambda functions use:
-
-    nvm install 8.10
-
-Make that the default:
-
-    nvm alias default node
-
-##### Use NPM to install Node packages
-
-This will install the SAM Launchpad package, used for deployment.
-
-    npm install
-
 ##### Install SAM
 
 Using Linuxbrew to install SAM works great on the AWS AMI:
@@ -65,15 +49,15 @@ Then install and run DynamoDB Local, on that Docker network:
 
 Once you have DynamoDB running on port 8000, create some tables:
 
-    npm run create-table
+    rake dynamodb:create
 
 If you need to drop those tables and re-create them, then do this:
 
-    npm run delete-table
+    rake dynamodb:delete
 
 To scan the current contents of your ```dynamodb-data-logger-web-hook-signups``` table:
 
-    aws dynamodb scan --endpoint-url http://localhost:8000 --table-name dynamodb-data-logger-web-hook-signups
+    rake dynamodb:scan
 
 #### Start an HTTP server with SAM Local
 
@@ -96,8 +80,8 @@ Once you have an HTTP server running, you can send an HTTP request to it:
 
 If all goes well, it will return 200 response with a JSON representation of the record that it just posted to DynamoDB.
 
-    2019-04-04 18:26:10 127.0.0.1 - - [04/Apr/2019 18:26:10] "POST /signups?source=example HTTP/1.1" 200 -
-    {"id":"2730d6dc-5384-44e9-8863-be7b81ea380a","created_at":"2019-04-04T18:26:09+00:00","body":"param1=value1&param2=value2","source":"example"}
+    2019-04-04 21:19:17 127.0.0.1 - - [04/Apr/2019 21:19:17] "POST /signups HTTP/1.1" 200 -
+    {"id":"1611588b-24a5-49ff-9d27-be1bc4397d6a","created_at":"2019-04-04T21:19:17+00:00","body":"param1=value1&param2=value2","source":"DataSourceName"}
 
 Note that it stores the `User-Agent` HTTP header as the data source for the record.
 
@@ -107,7 +91,7 @@ You can also bypass the HTTP server and invoke it directly:
 
 You won't get an HTTP response.  Instead, you will see the hash that the function returns:
 
-    {"statusCode":200,"body":"{\"id\":\"2dca8958-1e76-42d9-b829-5f191c76cb27\",\"created_at\":\"2019-04-04T18:24:51+00:00\",\"body\":\"TEST\",\"source\":\"DataSourceName\"}"}
+    {"statusCode":200,"body":"{\"id\":\"c094d3e3-e765-4f04-88bc-4c82352f4bd6\",\"created_at\":\"2019-04-04T21:19:46+00:00\",\"body\":\"TEST\",\"source\":\"DataSourceName\"}"}
 
 (The extra whitespace is for formatting, from the Awesome Print gem.)
 
@@ -126,48 +110,25 @@ First, create a bucket for CloudFormation to use during the deployment.
 
 Then deploy with:
 
-    npm run build && npm run deploy
+    rake sam:build && rake sam:package && rake sam:deploy
 
 Ongoing Development
 -------------------
 
 Each subsequent time that you want to spin up a development environment, do this:
 
-#### Start your local DynamoDB service
-
-    docker start dynamodb
-
-This will run a static HTTP server and it will continue running in your terminal.
-
-#### Start an HTTP server with SAM Local
-
-Open another terminal window / tab / screen, and run:
-
-    npm run start
-
-### Shortcut
-
-NPM can spin up a whole development environment for you, including the DynamoDB instance and SAM Local server.  The disadvantage is that the SAM Local server has to run in the background, so you have to stop it by killing it.  Or by running the handy NPM scripts for stopping or restarting.
-
 #### Start
 
-To start a development environment, run:
-
-    npm run development
-
-That will run:
-
-* `npm run dynamodb`
-* `npm run start`
+    rake develop:start
 
 #### Stop
 
 To stop those things:
 
-    npm run stop`
+    rake develop:stop
 
-#### Reset
+#### Restart
 
 To stop and restart everything:
 
-    npm run reset
+    rake develop:restart
