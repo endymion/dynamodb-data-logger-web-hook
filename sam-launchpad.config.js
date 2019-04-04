@@ -1,9 +1,9 @@
 const join = require('path').join;
 
 module.exports = {
-  "project_name": "dynamodb-data-logger-web-hook",
+  "project_name": "c",
   "single_project": true,
-  "base_path": join( __dirname ),
+  "base_path": join( __dirname, 'lambda' ),
   "template_parameters": {
   },
   "commands": {

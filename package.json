@@ -3,16 +3,13 @@
   "version": "1.0.0",
   "description": "AWS Lambda function written in Ruby for recording API Gateway post request data to DynamoDB.",
   "scripts": {
-    "publish": "sam-launchpad",
-    "build": "sam-launchpad --skip-deploy --skip-package --skip-coverage --skip-validation",
-    "validate": "sam-launchpad --skip-deploy --skip-package --skip-coverage --skip-build",
-    "package": "sam-launchpad --skip-deploy --skip-build --skip-coverage --skip-validation",
-    "deploy": "sam-launchpad --skip-package --skip-build --skip-coverage --skip-validation",
-    "sam-test": "sam-launchpad --skip-package --skip-build --skip-deploy --skip-validation",
+    "build": "sam build --base-dir lambda",
+    "package": "sam package --s3-bucket dynamodb-data-logger-web-hook --output-template-file packaged-template.yaml",
+    "deploy": "sam deploy --template-file template.yaml --stack-name dynamodb-data-logger-web-hook-development --template-file packaged-template.yaml --capabilities CAPABILITY_IAM --parameter-overrides Environment=development ProjectName=dynamodb-data-logger-web-hook",
     "create-table": "aws dynamodb create-table --endpoint-url http://localhost:8000 --table-name dynamodb-data-logger-web-hook-signups --attribute-definitions AttributeName=id,AttributeType=S AttributeName=created_at,AttributeType=S --key-schema AttributeName=id,KeyType=HASH AttributeName=created_at,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1",
     "delete-table": "aws dynamodb delete-table --endpoint-url http://localhost:8000 --table-name dynamodb-data-logger-web-hook-signups",
     "dynamodb": "docker start dynamodb",
-    "server": "sam build --base-dir lib && sam local start-api -p 8080 --docker-network sam-local --env-vars=env.json &",
+    "server": "npm run build && sam local start-api -p 8080 --docker-network sam-local --env-vars=env.json &",
     "start": "npm run dynamodb; npm run server",
     "stop": "killall sam; killall node",
     "restart": "npm run stop; npm run start"
@@ -29,6 +26,5 @@
   "homepage": "https://github.com/VenueDriver/dynamodb-data-logger-web-hook#readme",
   "dependencies": {},
   "devDependencies": {
-    "sam-launchpad": "^1.1.23"
   }
 }

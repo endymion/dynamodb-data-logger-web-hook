@@ -79,7 +79,7 @@ To scan the current contents of your ```dynamodb-data-logger-web-hook-signups```
 
 Build, and use SAM Local for development:
 
-    sam build --base-dir lib && sam local start-api -p 8080 --docker-network sam-local --env-vars env.json
+    sam build --base-dir lambda && sam local start-api -p 8080 --docker-network sam-local --env-vars env.json
 
 Port 8080 is important if you're using AWS Cloud9.
 
@@ -92,39 +92,41 @@ Usage
 
 Once you have an HTTP server running, you can send an HTTP request to it:
 
-    curl -d "param1=value1&param2=value2" -X POST http://localhost:8080/signups
+    curl -A "DataSourceName" -d "param1=value1&param2=value2" -X POST "http://localhost:8080/signups"
 
-If all goes well, it will return 200 response with a string representation of the record that it just posted to DynamoDB.
+If all goes well, it will return 200 response with a JSON representation of the record that it just posted to DynamoDB.
 
-    2019-04-04 17:33:46 127.0.0.1 - - [04/Apr/2019 17:33:46] "POST /signups HTTP/1.1" 200 -
-    {
-                :id => "a8b7fe69-88b8-40e9-a7b4-d0a0f4440c35",
-        :created_at => "2019-04-04T17:33:45+00:00",
-              :body => "param1=value1&param2=value2"
-    }
+    2019-04-04 18:26:10 127.0.0.1 - - [04/Apr/2019 18:26:10] "POST /signups?source=example HTTP/1.1" 200 -
+    {"id":"2730d6dc-5384-44e9-8863-be7b81ea380a","created_at":"2019-04-04T18:26:09+00:00","body":"param1=value1&param2=value2","source":"example"}
+
+Note that it stores the `User-Agent` HTTP header as the data source for the record.
 
 You can also bypass the HTTP server and invoke it directly:
 
-    sam build --base-dir lib && echo "{\"body\":\"TEST\"}" | sam local invoke PostSignup --docker-network sam-local --env-vars=env.json
+    sam build --base-dir lambda && echo "{\"body\":\"TEST\", \"source\": \"DataSourceName\"}" | sam local invoke PostSignup --docker-network sam-local --env-vars=env.json
 
 You won't get an HTTP response.  Instead, you will see the hash that the function returns:
 
-    {"statusCode":200,"body":"{\n            :id =\u003e \"e09ea46f-b7e0-4564-9494-f7b9361b0bdb\",\n    :created_at =\u003e \"2019-04-04T17:43:22+00:00\",\n          :body =\u003e \"TEST\"\n}"}
+    {"statusCode":200,"body":"{\"id\":\"2dca8958-1e76-42d9-b829-5f191c76cb27\",\"created_at\":\"2019-04-04T18:24:51+00:00\",\"body\":\"TEST\",\"source\":\"DataSourceName\"}"}
 
 (The extra whitespace is for formatting, from the Awesome Print gem.)
+
+#### Source tagging
+
+You can provide a `source` parameter and the DynamoDB record will be tagged with it.  You can either provide that parameter as a `?source=` URL parameter, or as one of the event parameters if you're bypassing HTTP.  As demonstrated above.
 
 Deployment
 ----------
 
-To deploy to the cloud using AWS CloudFormation, use the NPM script to run the SAM Launchpad module that will use SAM to deploy to CloudFormation.
+This project uses SAM to deploy to the cloud using AWS CloudFormation.
 
-First, you might need to manually create a bucket for CloudFormation to use during the deployment.  At the time of this writing, SAM Launchpad does not yet automatically create that bucket for you.  Create it with:
+First, create a bucket for CloudFormation to use during the deployment.
 
     aws s3api create-bucket --bucket dynamodb-data-logger-web-hook
 
 Then deploy with:
 
-    npm run publish -- --skip-coverage --stage development --verbose --stop-on-error
+    npm run build && npm run deploy
 
 Ongoing Development
 -------------------
