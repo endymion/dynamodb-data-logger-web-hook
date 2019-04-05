@@ -112,6 +112,10 @@ Then deploy with:
 
     rake sam:build && rake sam:package && rake sam:deploy
 
+To deploy to production instead of development:
+
+    rake sam:deploy[production]
+
 Ongoing Development
 -------------------
 

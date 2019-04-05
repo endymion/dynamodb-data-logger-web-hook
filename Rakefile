@@ -11,8 +11,9 @@ namespace :sam do
   end
   
   desc 'Uses SAM to deploy the project.'
-  task :deploy do
-    system('sam deploy --template-file template.yaml --stack-name dynamodb-data-logger-web-hook-development --template-file packaged-template.yaml --capabilities CAPABILITY_IAM --parameter-overrides Environment=development ProjectName=dynamodb-data-logger-web-hook')
+  task :deploy, :environment do |task, args|
+    args.with_defaults(:environment => 'development')
+    system("sam deploy --template-file template.yaml --stack-name dynamodb-data-logger-web-hook-#{args[:environment]} --template-file packaged-template.yaml --capabilities CAPABILITY_IAM --parameter-overrides Environment=#{args[:environment]} ProjectName=dynamodb-data-logger-web-hook")
   end
 
 end
