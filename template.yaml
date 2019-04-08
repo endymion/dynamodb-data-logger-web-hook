@@ -53,5 +53,5 @@ Resources:
         GetEvent:
           Type: Api
           Properties:
-            Path: /signups
+            Path: /items
             Method: post
