@@ -12,7 +12,7 @@ Globals:
   Function:
     Environment:
       Variables:
-        ITEMS_TABLE_NAME: !Ref ItemssTable
+        ITEMS_TABLE_NAME: !Ref ItemsTable
         STAGE_NAME : !Ref 'Environment'
 
 Resources:
@@ -41,7 +41,7 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
 
-  PostSignup:
+  PostItem:
     Type: AWS::Serverless::Function
     Properties:
       Handler: items.post
