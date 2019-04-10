@@ -27,17 +27,17 @@ namespace :dynamodb do
 
   desc 'Create the local DynamoDB table for local development.'
   task :create do
-    system('aws dynamodb create-table --endpoint-url http://localhost:8000 --table-name dynamodb-data-logger-web-hook-signups --attribute-definitions AttributeName=id,AttributeType=S AttributeName=created_at,AttributeType=S --key-schema AttributeName=id,KeyType=HASH AttributeName=created_at,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1')
+    system('aws dynamodb create-table --endpoint-url http://localhost:8000 --table-name dynamodb-data-logger-web-hook-items --attribute-definitions AttributeName=id,AttributeType=S AttributeName=created_at,AttributeType=S --key-schema AttributeName=id,KeyType=HASH AttributeName=created_at,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1')
   end
 
   desc 'Delete the local DynamoDB table.'
   task :delete do
-    system('aws dynamodb delete-table --endpoint-url http://localhost:8000 --table-name dynamodb-data-logger-web-hook-signups')
+    system('aws dynamodb delete-table --endpoint-url http://localhost:8000 --table-name dynamodb-data-logger-web-hook-items')
   end
   
   desc 'Scan the table.'
   task :scan do
-    system('aws dynamodb scan --endpoint-url http://localhost:8000 --table-name dynamodb-data-logger-web-hook-signups')
+    system('aws dynamodb scan --endpoint-url http://localhost:8000 --table-name dynamodb-data-logger-web-hook-items')
   end
 
 end

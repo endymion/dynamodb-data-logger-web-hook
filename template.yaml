@@ -12,7 +12,7 @@ Globals:
   Function:
     Environment:
       Variables:
-        SIGNUPS_TABLE_NAME: !Ref SignupsTable
+        ITEMS_TABLE_NAME: !Ref ItemssTable
         STAGE_NAME : !Ref 'Environment'
 
 Resources:
@@ -23,7 +23,7 @@ Resources:
       AccessControl: PublicRead
       BucketName: !Sub ${Environment}.assets.${ProjectName}
 
-  SignupsTable:
+  ItemsTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Join ['-', [!Ref 'ProjectName', !Ref 'Environment']]
@@ -44,7 +44,7 @@ Resources:
   PostSignup:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: signups.post
+      Handler: items.post
       Runtime: ruby2.5
       Policies:
        - AWSLambdaExecute

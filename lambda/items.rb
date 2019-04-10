@@ -1,8 +1,8 @@
 require 'aws-record'
 
-class SignupTable
+class Item
   include Aws::Record
-  set_table_name ENV['SIGNUPS_TABLE_NAME']
+  set_table_name ENV['ITEMS_TABLE_NAME']
   # Use a local DynamoDB instance if running in SAM Local.
   configure_client endpoint: 'http://dynamodb:8000' if ENV['AWS_SAM_LOCAL']
   
@@ -30,7 +30,7 @@ def post(event:nil, context:nil)
   end
   
   # Create the DynamoDB record from the data.
-  record = SignupTable.new(data)
+  record = Item.new(data)
   record.save!
   
   # Return a JSON representation of that record.

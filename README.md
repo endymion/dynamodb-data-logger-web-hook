@@ -55,7 +55,7 @@ If you need to drop those tables and re-create them, then do this:
 
     rake dynamodb:delete
 
-To scan the current contents of your ```dynamodb-data-logger-web-hook-signups``` table:
+To scan the current contents of your ```dynamodb-data-logger-web-hook-items``` table:
 
     rake dynamodb:scan
 
@@ -76,11 +76,11 @@ Usage
 
 Once you have an HTTP server running, you can send an HTTP request to it:
 
-    curl -A "DataSourceName" -d "param1=value1&param2=value2" -X POST "http://localhost:8080/signups"
+    curl -A "DataSourceName" -d "param1=value1&param2=value2" -X POST "http://localhost:8080/items"
 
 If all goes well, it will return 200 response with a JSON representation of the record that it just posted to DynamoDB.
 
-    2019-04-04 21:19:17 127.0.0.1 - - [04/Apr/2019 21:19:17] "POST /signups HTTP/1.1" 200 -
+    2019-04-04 21:19:17 127.0.0.1 - - [04/Apr/2019 21:19:17] "POST /items HTTP/1.1" 200 -
     {"id":"1611588b-24a5-49ff-9d27-be1bc4397d6a","created_at":"2019-04-04T21:19:17+00:00","body":"param1=value1&param2=value2","source":"DataSourceName"}
 
 Note that it stores the `User-Agent` HTTP header as the data source for the record.
